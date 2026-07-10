@@ -70,17 +70,26 @@ runs:
       # that runs cleanly. Re-pin to a newer tag once x/vuln fixes the regression.
       run: go install golang.org/x/vuln/cmd/govulncheck@v1.3.0
       shell: bash
-    - if: inputs.allow-file == '' && inputs.output-file == ''
       env:
         GOOS: ''
         GOARCH: ''
+    - if: inputs.allow-file == '' && inputs.output-file == ''
       name: Run govulncheck
-      run: govulncheck -C ${{ inputs.work-dir }} -format ${{ inputs.output-format }} ${{ inputs.go-package }}
+      run: govulncheck -C "$WORK_DIR" -format "$OUTPUT_FORMAT" "$GO_PACKAGE"
       shell: bash
+      env:
+        WORK_DIR: ${{ inputs.work-dir }}
+        OUTPUT_FORMAT: ${{ inputs.output-format }}
+        GO_PACKAGE: ${{ inputs.go-package }}
     - if: inputs.allow-file == '' && inputs.output-file != ''
       name: Run govulncheck and save to file
-      run: govulncheck -C ${{ inputs.work-dir }} -format ${{ inputs.output-format }} ${{ inputs.go-package }} > ${{ inputs.output-file }}
+      run: govulncheck -C "$WORK_DIR" -format "$OUTPUT_FORMAT" "$GO_PACKAGE" > "$OUTPUT_FILE"
       shell: bash
+      env:
+        WORK_DIR: ${{ inputs.work-dir }}
+        OUTPUT_FORMAT: ${{ inputs.output-format }}
+        GO_PACKAGE: ${{ inputs.go-package }}
+        OUTPUT_FILE: ${{ inputs.output-file }}
     - if: inputs.allow-file != ''
       name: Run govulncheck with allowlist
       shell: bash
